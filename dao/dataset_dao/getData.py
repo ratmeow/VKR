@@ -8,8 +8,12 @@ def get_city(time: str, predict_mode=False):
     state = c.get_city_state()
     if predict_mode:
         predict_state = c.get_city_predict_state()
-        city_info['predict'] = predict_state
-        city_info['rmse'] = c.get_rmse()
+        if predict_state:
+            city_info['predict'] = predict_state
+            city_info['rmse'] = c.rmse
+            city_info['mape'] = c.mape
+        else:
+            return False
     weather = c.get_city_weather()
     holiday = c.check_holiday()
     if holiday:

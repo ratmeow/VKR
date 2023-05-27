@@ -55,12 +55,8 @@ def load_meteorology(timeslots, fname=os.path.join(DATAPATH, 'BJ_Meteorology.h5'
     WS = 1. * (WS - WS.min()) / (WS.max() - WS.min())
     TE = 1. * (TE - TE.min()) / (TE.max() - TE.min())
 
-    # print("shape: ", WS.shape, WR.shape, TE.shape)
-
-    # concatenate all these attributes
     merge_data = np.hstack([WR, WS[:, None], TE[:, None]])
 
-    # print('meger shape:', merge_data.shape)
     return merge_data
 
 
@@ -150,8 +146,7 @@ def load_data_mode(T=48, flow_channel=2, len_closeness=None, len_period=None, le
     assert (len_closeness + len_period + len_trend > 0)
     year = 16
     fname = os.path.join(DATAPATH, 'BJ{}_M32x32_T30_InOut.h5'.format(year))
-    print("file name: ", fname)
-    # data_statistics(fname)
+    # print("file name: ", fname)
     data, timestamps = load_st_data(fname)
     data, timestamps = remove_incomplete_days(data, timestamps, T)
     data = data[:, :flow_channel]
@@ -175,7 +170,6 @@ def load_data_mode(T=48, flow_channel=2, len_closeness=None, len_period=None, le
     Y.append(_Y)
     timestamps_Y += _timestamps_Y
 
-    print(timestamps_Y)
 
     meta_feature = []
     if meta_data:

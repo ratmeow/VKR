@@ -118,12 +118,16 @@ def get_events(date_time:str):
 
 def get_predict(dataset: TaxiBJDataset, date_time: str):
     dataset_timestamps = decode_time_steps(dataset.timestamps_Y)
-    start = dataset_timestamps.index('2016032711')
-    end = dataset_timestamps.index(date_time)
-    evaluate_predict, rmse = evaluate(dataset, start, end)
-    predict = (evaluate_predict[0]).detach().numpy()
+    try:
+        start = dataset_timestamps.index('2016032711')
+        end = dataset_timestamps.index(date_time)
+    except ValueError:
+        return {'error': 'Invalid start or end time'}
+
+    evaluate_predict, rmse, mape = evaluate(dataset, start, end)
+    predict = evaluate_predict[0].detach().numpy()
     inflow, outflow = predict[0], predict[1]
-    return {'inflow': inflow, 'outflow': outflow, 'rmse': rmse}
+    return {'inflow': inflow, 'outflow': outflow, 'rmse': rmse, 'mape':mape}
 
 
 def get_predict_for_cell(datetime_str: str, number: int, dataset: TaxiBJDataset):
@@ -144,6 +148,8 @@ def get_predict_for_cell(datetime_str: str, number: int, dataset: TaxiBJDataset)
     if start_time + steps_count > 48:
         new_day_steps = (steps_count + start_time) % 48
 
+        if new_day_steps == 0:
+            new_day_steps = 48
         need_predicts = predicts[-new_day_steps:]
 
         for predict_time_step in need_predicts:

@@ -57,10 +57,10 @@ def evaluate(test_dataset, start, end, cell_mode=False):
         y_list.append(y)
         y_pred_list.append(y_pred)
         rmse_list.append(rmse_loss.item())
-        mape_list.append(mape_loss)
+        mape_list.append(mape_loss.item())
     if cell_mode:
-        return y_list
-    return y_pred_list[-1], np.mean(rmse_list)
+        return y_pred_list
+    return y_pred_list[-1], np.mean(rmse_list), np.mean(mape_list)
 
 
 

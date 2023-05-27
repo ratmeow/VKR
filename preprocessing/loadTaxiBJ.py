@@ -55,27 +55,13 @@ def load_meteorology(timeslots, fname=os.path.join(DATAPATH, 'BJ_Meteorology.h5'
     WS = 1. * (WS - WS.min()) / (WS.max() - WS.min())
     TE = 1. * (TE - TE.min()) / (TE.max() - TE.min())
 
-    # print("shape: ", WS.shape, WR.shape, TE.shape)
 
-    # concatenate all these attributes
     merge_data = np.hstack([WR, WS[:, None], TE[:, None]])
 
-    # print('meger shape:', merge_data.shape)
     return merge_data
 
 
 def data_statistics(fname):
-    """
-    Return data information like the following
-
-    data shape: (7220, 2, 32, 32)
-    # of days: 162, from 2015-11-01 to 2016-04-10
-    # of timeslots: 7776
-    # of timeslots (available): 7220
-    missing ratio of timeslots: 7.2%
-    max: 1250.000, min: 0.000
-    """
-
     def count_timeslot(f):
         """
         count the number of timeslot of given data
@@ -155,7 +141,6 @@ def load_data(T=48, flow_channel=2, len_closeness=None, len_period=None, len_tre
         print("file name: ", fname)
         data_statistics(fname)
         data, timestamps = load_st_data(fname)
-        # [4848, 2, 32, 32] [b'2013070101'...] for year 2013
         data, timestamps = remove_incomplete_days(data, timestamps, T)
         data = data[:, :flow_channel]
         data[data < 0] = 0.

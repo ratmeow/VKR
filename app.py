@@ -28,9 +28,12 @@ def get_inflows_predict(date: str, time: str):
     new_date = ''.join(date.split('-'))
     datetime = new_date + time
     city_info = get_city(datetime, True)
-    city_info['state'] = city_info['state'][0]
-    city_info['predict'] = city_info['predict'][0]
-    return city_info
+    if city_info:
+        city_info['state'] = city_info['state'][0]
+        city_info['predict'] = city_info['predict'][0]
+        return city_info
+    else:
+        return {"error": "Невозможно сделать прогноз на данную дату(недостаток данных), пожалуйста выберите другую дату"}
 
 
 @app.get("/city/outflows/{date}/{time}/predict")

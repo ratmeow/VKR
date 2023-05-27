@@ -17,7 +17,9 @@ class City:
         if self.predict_mode:
             self.predict_structure = []
             predict_data = get_predict(dataset, time)
-            self.rmse = predict_data['rmse']
+            if 'error' not in predict_data:
+                self.rmse = predict_data['rmse']
+                self.mape = predict_data['mape']
 
         number = 0
 
@@ -27,7 +29,7 @@ class City:
                 # print(f'number {number}')
                 cell = Cell(number, inf[j][i], outf[j][i])
                 self.structure.append(cell)
-                if self.predict_mode:
+                if self.predict_mode and 'error' not in predict_data:
                     cell = Cell(number, predict_data['inflow'][j][i], predict_data['outflow'][j][i])
                     self.predict_structure.append(cell)
                 number += 1
@@ -48,11 +50,14 @@ class City:
     def get_city_predict_state(self):
         inflows = []
         outflows = []
-        for cell in self.predict_structure:
-            state = cell.get_state()
-            inflows.append(state[0])
-            outflows.append(state[1])
-        return inflows, outflows
+        if len(self.predict_structure)>0:
+            for cell in self.predict_structure:
+                state = cell.get_state()
+                inflows.append(state[0])
+                outflows.append(state[1])
+            return inflows, outflows
+        else:
+            return False
 
     def get_city_weather(self):
         return self.weather
