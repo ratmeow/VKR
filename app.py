@@ -3,7 +3,7 @@ import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
 from dao.dataset_dao.getData import get_city, get_cell_info
-from dao.dataset_dao.utils import get_complete_days_from_data
+from dao.dataset_dao.utils import get_complete_days_from_data, get_avaliable_models
 
 app = FastAPI()
 
@@ -23,6 +23,10 @@ def read_root():
 def get_available_dates():
     return get_complete_days_from_data()
 
+@app.get("/city/models")
+def get_available_models():
+    return get_avaliable_models()
+
 @app.get("/city/inflows/{date}/{time}/predict")
 def get_inflows_predict(date: str, time: str):
     new_date = ''.join(date.split('-'))
@@ -37,13 +41,16 @@ def get_inflows_predict(date: str, time: str):
 
 
 @app.get("/city/outflows/{date}/{time}/predict")
-def get_inflows_predict(date: str, time: str):
+def get_outflows_predict(date: str, time: str):
     new_date = ''.join(date.split('-'))
     datetime = new_date + time
     city_info = get_city(datetime, True)
-    city_info['state'] = city_info['state'][1]
-    city_info['predict'] = city_info['predict'][1]
-    return city_info
+    if city_info:
+        city_info['state'] = city_info['state'][1]
+        city_info['predict'] = city_info['predict'][1]
+        return city_info
+    else:
+        return {"error": "Невозможно сделать прогноз на данную дату(недостаток данных), пожалуйста выберите другую дату"}
 
 
 @app.get("/city/inflows/{date}/{time}")
@@ -76,7 +83,7 @@ def get_cell_inflow(date: str, time: str, cell_id: int):
 def get_cell_outflow(date: str, time: str, cell_id: int):
     new_date = ''.join(date.split('-'))
     datetime = new_date + time
-    _, outflows = get_cell_info(datetime, cell_id)
+    _, outflows = get_cell_info(datetime, cell_id, depth=1)
     return outflows
 
 

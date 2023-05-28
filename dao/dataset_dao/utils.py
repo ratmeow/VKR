@@ -1,10 +1,11 @@
 import datetime
 import math
 from datetime import datetime, timedelta
+import os
 
 import numpy as np
 
-from .upload import load_data, load_weather, load_events, convert_weather_type
+from dao.dataset_dao.upload import load_data, load_weather, load_events, convert_weather_type
 from model.eval import evaluate
 from dao.dataset_dao.upload import decode_time_steps
 from model.dataset import TaxiBJDataset
@@ -166,3 +167,24 @@ def get_predict_for_cell(datetime_str: str, number: int, dataset: TaxiBJDataset)
             outflow_list.append(int(outflow[row][col]))
 
     return inflow_list, outflow_list
+
+def get_avaliable_models():
+    folder_path = 'R:/vkr2/fastapi/checkpoints/done_models'
+    try:
+        if not os.path.exists(folder_path):
+            print(f"Папка {folder_path} не существует.")
+            return []
+
+        if not os.path.isdir(folder_path):
+            print(f"Путь {folder_path} не является директорией.")
+            return []
+
+        # Получаем список всех файлов в папке
+        files = os.listdir(folder_path)
+        file_names = [os.path.splitext(file)[0] for file in files]
+
+        # Возвращаем список файлов
+        return file_names
+    except Exception as e:
+        print(f"Произошла ошибка: {str(e)}")
+        return []

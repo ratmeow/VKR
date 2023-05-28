@@ -34,7 +34,7 @@ class Conv1ResUnitsConv2(nn.Module):
     Conv1 + ResUnit * 4 + Conv2
     """
 
-    def __init__(self, in_dim, filter_num=64, L=4):
+    def __init__(self, in_dim, filter_num=64, L=12):
         super(Conv1ResUnitsConv2, self).__init__()
         self.L = L
         self.Conv1 = nn.Conv2d(in_dim, filter_num, kernel_size=3, stride=1, padding=1, bias=True)

@@ -25,10 +25,10 @@ gpu_id = 0
 device = torch.device('cpu')
 rmse = RMSELoss().to(gpu_id)
 mape = MAPELoss().to(gpu_id)
-model = STResNet(lc=l_c, lp=l_p, lt=l_t).to(device)
-model.load('checkpoints/STResNet_0811_14_26_164.pth')
-model.eval()
 dataset = TaxiBJDataset(mode='test', len_c=l_c, len_p=l_p, len_t=l_t, len_test=len_test)
+model = STResNet(lc=l_c, lp=l_p, lt=l_t).to(device)
+model.load('checkpoints/done_models/STResNet_L12_E50.pth')
+model.eval()
 
 def rescale_loss(mmn, y, y_pred):
     y_pred = mmn.inverse_transform(y_pred)
@@ -38,7 +38,7 @@ def rescale_loss(mmn, y, y_pred):
     return y_pred, y, rescale_rmse, rescale_mape
 
 
-def evaluate(test_dataset, start, end, cell_mode=False):
+def evaluate(test_dataset, start, end, model,cell_mode=False):
     test_dataset.set_test(start, end)
     mmn = test_dataset.mmn
     test_data_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
